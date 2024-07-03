@@ -29,6 +29,7 @@ def main():
     # window.show()
 
 if __name__ == '__main__':
+    print("this output is used by CPP launcher to check if the python-version PGPL is successfully opened.")
     main()
 
 # cef: pip install cefpython3
