@@ -26,7 +26,7 @@ class GitManager(Command):
 
     def __init__(self, installer_config, progress_tracker=None):
         super().__init__(progress_tracker=progress_tracker)
-        self.git = os.path.join(ROOT_PATH, "toolkit/Git/mingw64/bin/git.exe")
+        self.git = os.path.join(ROOT_PATH, "../toolkit/Git/bin/git.exe")
         self.Repository = installer_config["Repository"]
         self.Branch = installer_config["Branch"]
         self.GitProxy = installer_config["GitProxy"]
@@ -260,12 +260,12 @@ class PythonManager(Command):
                 CONDARC_NOT_FOUND_flag = True
                 import shutil
                 self.info(t2t('The .condarc not found, create one'), mode='a')
-                shutil.copyfile(rf'{ROOT_PATH}/toolkit/.condarc', CONDARC_FILE_PATH)
-                shutil.copyfile(rf'{ROOT_PATH}/toolkit/.condarc', CONDARC_MARK_PATH)
+                shutil.copyfile(rf'{ROOT_PATH}/../resource/.condarc', CONDARC_FILE_PATH)
+                shutil.copyfile(rf'{ROOT_PATH}/../resource/.condarc', CONDARC_MARK_PATH)
             else:
                 self.info(t2t('The .condarc already exists, you may have install anaconda/miniconda, the original configuration file will be used'), mode='a')
         
-        self.execute(fr'"{ROOT_PATH}/toolkit/Scripts/activate.bat" && conda create -p "{self.python_folder}" python={self.python_version} -y')
+        self.execute(fr'"{ROOT_PATH}/../toolkit/Miniconda/Scripts/activate.bat" && conda create -p "{self.python_folder}" python={self.python_version} -y')
         
         if os.path.exists(CONDARC_MARK_PATH):
             if DEBUG_MODE: self.info('remove .condarc file')

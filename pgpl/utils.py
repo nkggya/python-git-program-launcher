@@ -12,7 +12,7 @@ import ssl
 PROGRAM_NAME = "Python-Git-Program-Launcher"
 DEBUG_MODE = False
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PYTHON_EXE_PATH = os.path.join(ROOT_PATH, "toolkit/python.exe")
+PYTHON_EXE_PATH = os.path.join(ROOT_PATH, "..\\toolkit\\Miniconda\\python.exe")
 LAUNCHER_PYTHON_PATH = PYTHON_EXE_PATH
 PROGRAM_PYTHON_PATH = LAUNCHER_PYTHON_PATH
 REPO_PATH = ""
