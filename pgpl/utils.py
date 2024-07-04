@@ -2,6 +2,9 @@ import os
 import sys
 import json
 import time
+import winreg
+import requests
+
 from pgpl.logger import logger
 import locale
 from i18n import t2t
@@ -351,6 +354,22 @@ def url_file_exists(url):
         logger.error(e)
         return False
 
+def isProtectedByGreatWall():
+    try:
+        r = requests.get("https://www.x.com", verify=False, proxies=None, timeout=5)
+        logger.debug(f'get x.com: code: {r.status_code}')
+        return r.status_code > 210
+    except Exception as e:
+        logger.debug(f'get x.com error: {e}')
+        return True
+
+def proxy_info():
+    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\Microsoft\Windows\CurrentVersion\Internet Settings")
+    is_proxy_enabled = bool(winreg.QueryValueEx(key, "ProxyEnable")[0])
+    proxy_server = str(winreg.QueryValueEx(key, "ProxyServer")[0])
+    winreg.CloseKey(key)
+    logger.debug(f'proxy: {proxy_server}; enabled:{is_proxy_enabled}')
+    return is_proxy_enabled, proxy_server
 
 requesting_administrative_privileges = "@echo off\n"+\
 "\n"+\

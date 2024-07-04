@@ -191,6 +191,7 @@ class PipManager(Command):
                 self.execute(f'{self.pip()} install -r {self.requirements_file()}{self.pip_arg}')
         except ExecutionError as e:
             self.logger_hr(t2t('Update Dependencies Fail, Update pip'), 1, progress=0.1)
+            #TODO: 错误检查，包括：网络连接失败，etc.
             self.update_pip()
 
         # self.execute((f'{self.pip()} install pycocotools-windows{arg}'))

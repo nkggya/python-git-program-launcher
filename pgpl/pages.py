@@ -175,6 +175,9 @@ class MainPage(AdvancePage, Command):
         sp.create_popup()
         
         try:
+            # TODO: 检查fastgithub是否开启
+            if "FastGithub" in pin.pin[self.CHECKBOX_PIP]:
+                run_command(f'explorer {ROOT_PATH}\\..\\fastgithub_win-x64\\fastgithub.exe')
             global PROGRAM_PYTHON_PATH
             # MiniCondaManager(CONFIG_TEMPLATE).activate_env()
             PROGRAM_PYTHON_PATH = PythonManager(launching_config, self.pt).run()
@@ -277,6 +280,11 @@ class MainPage(AdvancePage, Command):
                         output.put_markdown(t2t("Setting the startup options, which may speed up the startup of the programme, but may cause the programme to fail to start. Make sure you use them when you understand what they do.")),
                         pin.put_checkbox(name=self.CHECKBOX_PIP, options=[
                             {
+                                "label": t2t("Use FastGithub to accelerate access"),
+                                "value": "FastGithub",
+                                "selected": self.sos.get_options_status('FastGithub'),
+                            },
+                            {
                                 "label":t2t("Disable checking pip update"),
                                 "value":"DCPU",
                                 "selected":self.sos.get_options_status('DCPU'),
@@ -296,6 +304,7 @@ class MainPage(AdvancePage, Command):
                                 "value":"SSASC",
                                 "selected":self.sos.get_options_status('SSASC'),
                             },
+
                             ]),
 
                     ], size='auto'),
