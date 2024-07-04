@@ -165,6 +165,15 @@ class MainPage(AdvancePage, Command):
                     f.close()
     
     def _start(self):
+        is_proxy, proxy_server = proxy_info()
+        if is_proxy:
+            tip = t2t("Please disable proxy servers to prevent download failures.")
+            output.toast(tip, color='red', duration=5)
+            if '7890' in proxy_server:
+                output.toast("请关闭Clash代理软件", color='red', duration=5)
+            if isProtectedByGreatWall():
+                return
+
         sp = ShowProcess(self.pt)
         
         logger.hr(f"Welcome to {PROGRAM_NAME}", 0)
