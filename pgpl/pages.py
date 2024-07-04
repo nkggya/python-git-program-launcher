@@ -355,7 +355,7 @@ class MainPage(AdvancePage, Command):
         os.startfile(os.path.join(ROOT_PATH, "Logs"))
 
     
-    branch = ("main" if not os.path.exists(fr'{ROOT_PATH}/../resource/.condarc') else "miniconda")
+    branch = "cpp_launcher"# ("main" if not os.path.exists(fr'{ROOT_PATH}/../resource/.condarc') else "miniconda")
     CONFIG_PGPL = {
         "RequirementsFile": "requirements.txt",
         "InstallDependencies": True,
