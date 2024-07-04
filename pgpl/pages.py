@@ -1,4 +1,5 @@
 import hashlib
+import os.path
 import threading
 from pathlib import Path
 
@@ -163,9 +164,12 @@ class MainPage(AdvancePage, Command):
                 with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w', encoding='utf-8') as f:
                     f.write(self.last_config)
                     f.close()
+
+
     
     def _start(self):
         is_proxy, proxy_server = proxy_info()
+        # 检测代理
         if is_proxy:
             tip = t2t("Please disable proxy servers to prevent download failures.")
             output.toast(tip, color='red', duration=5)
@@ -184,7 +188,7 @@ class MainPage(AdvancePage, Command):
         sp.create_popup()
         
         try:
-            # TODO: 检查fastgithub是否开启
+            # 开启fastgithub
             if "FastGithub" in pin.pin[self.CHECKBOX_PIP]:
                 run_command(f'explorer {ROOT_PATH}\\..\\fastgithub_win-x64\\fastgithub.exe')
             global PROGRAM_PYTHON_PATH
@@ -261,9 +265,14 @@ class MainPage(AdvancePage, Command):
         self.last_config = ""
         self._load_config_files()
         show_config = self.config_files
+        if os.path.exists(f'{ROOT_PATH}\\default_config.json'):
+            with open(f'{ROOT_PATH}\\launcher_config_name.txt', 'w', encoding='utf-8') as f:
+                f.write(f'{ROOT_PATH}\\default_config.json')
+            output.toast(
+                t2t('The default startup configuration has been detected, please click the "Startup" button directly.'),
+                duration=30)
         with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'r') as f:
             launching_config = str(f.read())
-            f.close()
         for i in show_config:
             if i['value'] == launching_config:
                 i['selected'] = True
@@ -322,6 +331,9 @@ class MainPage(AdvancePage, Command):
                 # None,
                 # output.put_scope(self.SCOPE_LOG)
             ], size=r'auto')
+
+
+
 
         
         #     output.popup(t2t("Error:PGPL path must contain only ASCII characters\nThe current path is ")+ROOT_PATH, closable=False)
@@ -389,6 +401,7 @@ class MainPage(AdvancePage, Command):
         self.pt.reset()
         # rc, inf, erc = run_command('git pull')
         # output.popup(t2t("Update"), f"{rc}, {inf}, {erc}")
+
 
 class ConfigPage(AdvancePage):
     def __init__(self):
