@@ -361,7 +361,7 @@ class MainPage(AdvancePage, Command):
         "InstallDependencies": True,
         "PypiMirror": "AUTO",
         "PythonMirror": "AUTO",
-        "Repository": "https://github.com/infstellar/python-git-program-launcher",
+        "Repository": select_fastest_url(["https://github.com/infstellar/python-git-program-launcher", "https://gitee.com/infstellar/python-git-program-launcher"]),
         "Main": "main.py",
         "Branch": branch,
         "GitProxy": False,
