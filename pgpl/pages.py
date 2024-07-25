@@ -189,8 +189,8 @@ class MainPage(AdvancePage, Command):
         
         try:
             # 开启fastgithub
-            if "FastGithub" in pin.pin[self.CHECKBOX_PIP]:
-                run_command(f'{ROOT_PATH}\\..\\toolkit\\fastgithub_win-x64\\fastgithub.exe start')
+            # if "FastGithub" in pin.pin[self.CHECKBOX_PIP]:
+            #     run_command(f'{ROOT_PATH}\\..\\toolkit\\fastgithub_win-x64\\fastgithub.exe start')
             global PROGRAM_PYTHON_PATH
             # MiniCondaManager(CONFIG_TEMPLATE).activate_env()
             PROGRAM_PYTHON_PATH = PythonManager(launching_config, self.pt).run()
