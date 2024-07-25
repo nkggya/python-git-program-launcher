@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import time
+import typing
 import winreg
 import requests
 
@@ -49,7 +50,7 @@ def get_local_lang():
 
 GLOBAL_LANG = get_local_lang()
 if locale.getdefaultlocale()[0] == 'zh_CN':
-    PROXY_LANG = 'zh_CN' 
+    PROXY_LANG = 'zh_CN'
 else:
     PROXY_LANG = "en_US"
 
@@ -106,7 +107,7 @@ def save_config_json(x, json_name):
         json_name += '.json'
     json.dump(x, open(os.path.join(ROOT_PATH, 'configs', json_name), 'w', encoding='utf-8'), sort_keys=True, indent=2,
               ensure_ascii=False)
-    
+
 def save_json(x, json_name):
     """保存json.
 
@@ -152,7 +153,7 @@ def read_file_flag(n:str) -> bool:
             return False
         else:
             return bool(s)
-        
+
 def write_file_flag(n:str, x:bool) -> None:
     p = os.path.join(ROOT_PATH, 'pgpl-cache')
     verify_path(p)
@@ -176,10 +177,10 @@ class ProgressTracker():
         self.err_code = 0
         self.err_slu = ""
         self.monitor_list = []
-    
+
     def set_percentage(self, x):
         self.percentage = x
-    
+
     def set_info(self, x, end='\n'):
         self.info = x+end
 
@@ -189,20 +190,20 @@ class ProgressTracker():
 
     def add_monitor(self, text:str):
         self.monitor_list.append({'text':text,'count':0})
-    
+
     def monitor(self, t):
         for i in self.monitor_list:
             if t in i['text'] and t != '':
                 i['count'] += 1
-    
+
     def get_counts(self, t):
         for i in self.monitor_list:
             if t == i['text']:
                 return i['count']
-    
+
     def reset(self):
         self.monitor_list = []
-    
+
 def find_right_encoding(str):
     encodings = ['utf-8', 'gbk', 'gb2312', 'big5']
     for encoding in encodings:
@@ -235,7 +236,7 @@ def run_command(command, progress_tracker:ProgressTracker = None):
                 logger.info(t2t('Please wait, pip is copying the file.'))
                 # progress_tracker.set_info(t2t('Please wait, pip is copying the file.'))
                 if progress_tracker is not None: progress_tracker.console_output = t2t('Please wait, pip is copying the file.') + '\n' + progress_tracker.console_output
-            
+
         else:
             pass
             # if time.time()-pt>5:
@@ -257,14 +258,14 @@ class Command():
             logger.warning("progress_tracker is None")
             progress_tracker = ProgressTracker()
         self.progress_tracker = progress_tracker
-    
+
     def error_checking(self, err_msg, err_code):
         def add_slu(msg:str):
             self.progress_tracker.err_slu+=f"- {msg}\n"
         logger.info("Running automatic error checking...")
         if 'get-pip.py' in err_msg and "No such file or directory" in err_msg:
             add_slu(t2t("toolkit is not installed. Please check if you downloaded the correct file or if you cloned the submodule."))
-    
+
     def show_error(self, command=None, error_code=None):
         logger.info("Update failed", 0)
         # self.show_config()
@@ -280,7 +281,7 @@ class Command():
             self.progress_tracker.set_info(message)
         else:
             self.progress_tracker.inp(message, progress)
-    
+
     def info(self, x:str, mode='r', end='\n'):
         """output info to console and UI.
 
@@ -292,7 +293,7 @@ class Command():
             self.progress_tracker.set_info(x+end)
         elif mode == 'a':
             self.progress_tracker.set_info(self.progress_tracker.info+x)
-    
+
     def execute(self, command, allow_failure=False, output=True, is_format=True): #, systematic_retry=False, systematic_execute=False):
         """
         
@@ -357,11 +358,37 @@ def url_file_exists(url):
 def isProtectedByGreatWall():
     try:
         r = requests.get("https://www.x.com", verify=False, proxies=None, timeout=5)
-        logger.debug(f'get x.com: code: {r.status_code}')
+        logger.info(f'get x.com: code: {r.status_code}')
         return r.status_code > 210
     except Exception as e:
-        logger.debug(f'get x.com error: {e}')
+        logger.info(f'get x.com error: {e}')
         return True
+
+def select_fastest_url(urls:typing.List[str]):
+    fastest_time = 999
+    fastest_url = urls[0]
+    requests.packages.urllib3.disable_warnings()
+    for url in urls:
+        total_time = 0
+        domain = url[:url.replace("http://", '').replace("https://", "").find('/') + url.find('://') + 3]
+        for i in range(4):
+            pt = time.time()
+            try:
+                r = requests.get(domain, verify=False, proxies=None, timeout=3)
+                use_time = time.time()-pt
+                logger.info(f'get {domain} code: {r.status_code} time: {use_time}')
+                if r.status_code > 210:
+                    total_time += 4
+                else:
+                    total_time += use_time
+            except Exception as e:
+                logger.info(f'get {domain} error: {e}')
+                total_time += 4
+        if total_time <= fastest_time:
+            fastest_time = total_time
+            fastest_url = url
+    logger.info(f'Fastest url: {fastest_url}; average cost {fastest_time/4}')
+    return fastest_url
 
 def proxy_info():
     key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\Microsoft\Windows\CurrentVersion\Internet Settings")
@@ -370,6 +397,8 @@ def proxy_info():
     winreg.CloseKey(key)
     logger.debug(f'proxy: {proxy_server}; enabled:{is_proxy_enabled}')
     return is_proxy_enabled, proxy_server
+
+
 
 requesting_administrative_privileges = "@echo off\n"+\
 "\n"+\

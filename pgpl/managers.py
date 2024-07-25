@@ -140,10 +140,7 @@ class PipManager(Command):
         self.InstallDependencies = installer_config["InstallDependencies"]
         self.PypiMirror = installer_config["PypiMirror"]
         if self.PypiMirror == "AUTO" or self.PypiMirror == "":
-            self.PypiMirror = {
-                "zh_CN": "https://pypi.tuna.tsinghua.edu.cn/simple",
-                "en_US": "https://pypi.org/simple"
-            }[PROXY_LANG]
+            self.PypiMirror = select_fastest_url(["http://pypi.org/simple", "http://pypi.tuna.tsinghua.edu.cn/simple", "http://mirrors.aliyun.com/pypi/simple"])
         
         self.pip_arg = []
         if self.PypiMirror:
@@ -216,10 +213,7 @@ class PythonManager(Command):
             }[PROXY_LANG]
         self.PypiMirror = installer_config["PypiMirror"]
         if self.PypiMirror == "AUTO" or self.PypiMirror == "":
-            self.PypiMirror = {
-                "zh_CN": "https://pypi.tuna.tsinghua.edu.cn/simple",
-                "en_US": "https://pypi.org/simple"
-            }[PROXY_LANG]
+            self.PypiMirror = select_fastest_url(["http://pypi.org/simple", "http://pypi.tuna.tsinghua.edu.cn/simple", "http://mirrors.aliyun.com/pypi/simple"])
         # https://registry.npmmirror.com/-/binary/python/3.10.1/python-3.10.1-amd64.exe
         # paths = ''
         # for i in os.environ['PATH'].split(';'):
