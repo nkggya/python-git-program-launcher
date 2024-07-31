@@ -140,7 +140,7 @@ class PipManager(Command):
         self.InstallDependencies = installer_config["InstallDependencies"]
         self.PypiMirror = installer_config["PypiMirror"]
         if self.PypiMirror == "AUTO" or self.PypiMirror == "":
-            self.PypiMirror = select_fastest_url(["http://pypi.org/simple", "http://pypi.tuna.tsinghua.edu.cn/simple", "http://mirrors.aliyun.com/pypi/simple"])
+            self.PypiMirror = select_fastest_url(["https://pypi.org/simple", "http://pypi.tuna.tsinghua.edu.cn/simple", "http://mirrors.aliyun.com/pypi/simple"])
         
         self.pip_arg = []
         if self.PypiMirror:
